@@ -1,7 +1,6 @@
 package dev.toxicaven.gonoun.util
 
 import java.awt.Color
-import java.awt.Color.*
 import kotlin.random.Random
 import kotlin.random.nextInt
 
