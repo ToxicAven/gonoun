@@ -8,19 +8,19 @@ import org.javacord.api.DiscordApiBuilder
 import java.io.File
 import kotlin.system.exitProcess
 
-class Gonoun {
+class Gonoun() {
     val prefix = "]"
 
-    fun start() {
-        val token: String
+    fun start(t: String) {
+        val bot : DiscordApi
+
         try {
-             token = File("token.txt").readText()
+            bot = DiscordApiBuilder().setToken(t).login().join()
         } catch (e: Exception) {
             println("Could not read token.txt")
             exitProcess(1)
         }
 
-        val bot : DiscordApi = DiscordApiBuilder().setToken(token).login().join()
         val commands: List<Command> = listOf(SetCommand(), GetCommand(), HelpCommand())
         val cmdManager = CommandManager()
 
