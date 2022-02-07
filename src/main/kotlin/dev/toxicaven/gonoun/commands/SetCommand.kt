@@ -1,7 +1,7 @@
 package dev.toxicaven.gonoun.commands
 
 import dev.toxicaven.gonoun.Command
-import dev.toxicaven.gonoun.util.PastelColor
+import dev.toxicaven.gonoun.util.RandomColor
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.Event
 import org.javacord.api.event.message.MessageCreateEvent
@@ -14,7 +14,7 @@ class SetCommand: Command("set") {
         val embed = EmbedBuilder()
             .setTitle("Click here to register your pronouns!")
             .setUrl("https://pronoundb.org/register")
-            .setColor(PastelColor().get())
+            .setColor(RandomColor().get())
             .setDescription("Select the `Connect with Discord` button so I can see them!")
         inEvent.channel.sendMessage(embed)
     }

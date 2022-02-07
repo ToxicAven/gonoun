@@ -30,7 +30,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes "Main-Class": "dev.toxicaven.gonoun.EntryPoint"
+        attributes "Main-Class": "dev.toxicaven.gonoun.Gonoun"
     }
 }
 

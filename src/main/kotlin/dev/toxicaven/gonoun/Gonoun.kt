@@ -5,19 +5,32 @@ import dev.toxicaven.gonoun.commands.HelpCommand
 import dev.toxicaven.gonoun.commands.SetCommand
 import org.javacord.api.DiscordApi
 import org.javacord.api.DiscordApiBuilder
-import java.io.File
 import kotlin.system.exitProcess
 
-class Gonoun() {
-    val prefix = "]"
+class Gonoun {
+    companion object {
+      @JvmStatic
+      fun main(args: Array<String>) {
+          val gonoun = Gonoun()
+          gonoun.start(args[0])
+        }
+    }
+
+    val prefix = ";"
 
     fun start(t: String) {
         val bot : DiscordApi
 
+        if (t.isBlank()) {
+            println("Please provide a token!")
+            exitProcess(1)
+        }
+
         try {
             bot = DiscordApiBuilder().setToken(t).login().join()
+            println("Logged in as ${bot.yourself.name}#${bot.yourself.discriminator}")
         } catch (e: Exception) {
-            println("Could not read token.txt")
+            e.printStackTrace()
             exitProcess(1)
         }
 
@@ -26,6 +39,7 @@ class Gonoun() {
 
         commands.forEach {
             cmdManager.registerCommand(it)
+            println("registered command '${it.name}'")
         }
 
         bot.addMessageCreateListener {

@@ -2,7 +2,7 @@ package dev.toxicaven.gonoun.commands
 
 import dev.toxicaven.gonoun.Command
 import dev.toxicaven.gonoun.util.PDBCaller
-import dev.toxicaven.gonoun.util.PastelColor
+import dev.toxicaven.gonoun.util.RandomColor
 import dev.toxicaven.gonoun.util.Pronouns
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.event.Event
@@ -12,6 +12,7 @@ class GetCommand : Command("get") {
     override fun execute(event: Event, args: Array<String>) {
         val ev = event as MessageCreateEvent
         val userName: String
+
         val user: String = if (ev.message.mentionedUsers.isNotEmpty()) {
             userName = ev.message.mentionedUsers[0].name
             println("called API for a mentioned user")
@@ -20,8 +21,9 @@ class GetCommand : Command("get") {
             println("called API for a UserID")
             try {
                 userName = ev.api.getUserById(args[0]).get().name
-            } catch (unused: Exception) {
-                ev.channel.sendMessage("I don't think that user exists in this server, try using their ID instead!")
+            } catch (er: Exception) {
+                er.printStackTrace()
+                makeAndSendEmbed(ev)
                 return
             }
             args[0]
@@ -52,17 +54,24 @@ class GetCommand : Command("get") {
             Pronouns.TT.response -> makeAndSendEmbed(ev, userName, Pronouns.TT, user)
             Pronouns.OTHER.response -> makeAndSendEmbed(ev, userName, Pronouns.OTHER, user)
             Pronouns.AVOID.response -> makeAndSendEmbed(ev, userName, Pronouns.AVOID, user)
-            else -> makeAndSendEmbed(ev, null, Pronouns.UNSPECIFIED, null)
+            else -> makeAndSendEmbed(ev)
         }
     }
 
-    private fun makeAndSendEmbed(e: Event, username: String?, pronouns: Pronouns, uid: String?) {
-        println("$username, ${pronouns.name}, $uid")
+    private fun makeAndSendEmbed(e: Event, username: String, pronouns: Pronouns, uid: String?) {
         val embed = EmbedBuilder()
-            .setTitle(if (username != null) "$username's pronouns" else "")
-            .setDescription((username ?: "") + pronouns.embed)
-            .setColor(PastelColor().get())
-            .setThumbnail(if (uid != null) e.api.getUserById(uid).get().avatar else null)
+            .setTitle("$username's pronouns")
+            .setDescription(username + pronouns.embed)
+            .setColor(RandomColor().get())
+            .setThumbnail(e.api.getUserById(uid).get().avatar)
+        (e as MessageCreateEvent).channel.sendMessage(embed)
+    }
+
+    private fun makeAndSendEmbed(e: Event) {
+        val embed = EmbedBuilder()
+            .setTitle("Hmm, I don't have that user's pronouns...")
+            .setDescription(Pronouns.UNSPECIFIED.embed)
+            .setColor(RandomColor().get())
         (e as MessageCreateEvent).channel.sendMessage(embed)
     }
 }
